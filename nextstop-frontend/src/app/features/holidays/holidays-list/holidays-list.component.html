@@ -1,0 +1,50 @@
+<div class="ui segment">
+    <h2 class="ui header">Feiertage</h2>
+  
+    <div class="ui form">
+      <div class="field">
+        <label>Datum</label>
+        <input [(ngModel)]="newHolidayDate" placeholder="YYYY-MM-DD" />
+      </div>
+  
+      <div class="field">
+        <label>Bezeichnung</label>
+        <input [(ngModel)]="newHolidayName" placeholder="z.B. Ostermontag" />
+      </div>
+  
+      <div class="field">
+        <div class="ui checkbox">
+          <input type="checkbox" [(ngModel)]="newIsSchoolHoliday" />
+          <label>Schulferien?</label>
+        </div>
+      </div>
+  
+      <button class="ui primary button" (click)="createHoliday()">Neuen Feiertag anlegen</button>
+    </div>
+  
+    <button class="ui button" (click)="loadHolidays()">Neu laden</button>
+  
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Bezeichnung</th>
+          <th>Schulferien?</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of holidays">
+          <td>{{ h.date }}</td>
+          <td>{{ h.name }}</td>
+          <td>
+            <i *ngIf="h.isschoolholiday" class="green checkmark icon"></i>
+          </td>
+          <td>
+            <button class="ui red button" (click)="deleteHoliday(h)">Löschen</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

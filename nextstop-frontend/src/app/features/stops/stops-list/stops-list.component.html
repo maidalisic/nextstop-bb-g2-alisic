@@ -1,0 +1,85 @@
+<h2>Haltestellen (Stops)</h2>
+
+<!-- Formular zum Anlegen eines neuen Stops -->
+<div class="ui segment">
+  <h3 class="ui header">Neuen Stop anlegen</h3>
+  <div class="ui form">
+    <div class="field">
+      <label>Name</label>
+      <input [(ngModel)]="newStopName" placeholder="z.B. FH Hagenberg" />
+    </div>
+    <div class="field">
+      <label>Shortcode</label>
+      <input [(ngModel)]="newStopShortcode" placeholder="z.B. FHHGB" />
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Latitude</label>
+        <input type="number" [(ngModel)]="newStopLatitude" placeholder="48.3683..." />
+      </div>
+      <div class="field">
+        <label>Longitude</label>
+        <input type="number" [(ngModel)]="newStopLongitude" placeholder="14.5155..." />
+      </div>
+    </div>
+
+    <button class="ui primary button" (click)="createStop()">
+      Neuen Stop anlegen
+    </button>
+  </div>
+</div>
+
+<!-- Suche -->
+<div class="ui segment">
+  <h3 class="ui header">Stops suchen</h3>
+  <div class="ui form">
+    <div class="field">
+      <label>Suchbegriff (Name, etc.)</label>
+      <input [(ngModel)]="searchQuery" placeholder="z.B. Hagenb" />
+    </div>
+    <div class="field">
+      <label>Latitude</label>
+      <input type="number" [(ngModel)]="searchLat" />
+    </div>
+    <div class="field">
+      <label>Longitude</label>
+      <input type="number" [(ngModel)]="searchLong" />
+    </div>
+    <div class="field">
+      <label>Limit</label>
+      <input type="number" [(ngModel)]="searchLimit" />
+    </div>
+
+    <button class="ui secondary button" (click)="searchStops()">
+      Suchen
+    </button>
+  </div>
+</div>
+
+<button class="ui button" (click)="loadStops()">Alle Stops laden</button>
+
+<!-- Tabelle aller Stops -->
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Shortcode</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of stops">
+      <td>{{ s.id }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.shortcode }}</td>
+      <td>{{ s.latitude }}</td>
+      <td>{{ s.longitude }}</td>
+      <td>
+        <button class="ui red button" (click)="deleteStop(s)">Löschen</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
