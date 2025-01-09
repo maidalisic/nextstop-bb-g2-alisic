@@ -1,0 +1,44 @@
+<h2>Verspätungsstatistik</h2>
+
+<div class="ui segment">
+  <h3 class="ui header">Abfrage</h3>
+  <div class="ui form">
+    <div class="field">
+      <label>Start Date</label>
+      <input type="text" [(ngModel)]="startDate" />
+    </div>
+    <div class="field">
+      <label>End Date</label>
+      <input type="text" [(ngModel)]="endDate" />
+    </div>
+    <div class="field">
+      <label>Route ID (optional)</label>
+      <input type="number" [(ngModel)]="routeId" />
+    </div>
+    <button class="ui primary button" (click)="loadStats()">Statistik laden</button>
+  </div>
+</div>
+
+<table class="ui celled table" *ngIf="stats.length > 0">
+  <thead>
+    <tr>
+      <th>Route ID</th>
+      <th>Average Delay (Sek.)</th>
+      <th>Pünktlich (%)</th>
+      <th>Leicht verspätet (%)</th>
+      <th>Verspätet (%)</th>
+      <th>Stark verspätet (%)</th>
+      <!-- etc. je nachdem, was du ausgibst -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of stats">
+      <td>{{ s.routeId }}</td>
+      <td>{{ s.averageDelaySeconds }}</td>
+      <td>{{ s.onTimePercent }}</td>
+      <td>{{ s.lightlyDelayedPercent }}</td>
+      <td>{{ s.delayedPercent }}</td>
+      <td>{{ s.heavilyDelayedPercent }}</td>
+    </tr>
+  </tbody>
+</table>
