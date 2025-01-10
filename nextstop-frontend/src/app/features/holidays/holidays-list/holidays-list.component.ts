@@ -1,5 +1,3 @@
-// Pfad: src/app/features/holidays/holidays-list/holidays-list.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,8 +12,6 @@ import { HolidaysService, Holiday } from '../holidays.service';
 })
 export class HolidaysListComponent implements OnInit {
   holidays: Holiday[] = [];
-
-  // Beispiel: Formularfelder
   newHolidayDate = '';
   newHolidayName = '';
   newIsSchoolHoliday = false;
@@ -49,7 +45,7 @@ export class HolidaysListComponent implements OnInit {
   }
 
   deleteHoliday(h: Holiday) {
-    if (!h.id) return; // Safety-Check
+    if (!h.id) return;
 
     this.holidaysService.deleteHoliday(h.id).subscribe({
       next: () => {

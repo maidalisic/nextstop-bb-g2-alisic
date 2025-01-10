@@ -3,10 +3,10 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'wea5-root',
-  standalone: true,
+  standalone: true, // Diese Komponente ist standalone
   imports: [
-    RouterOutlet,  // Damit <router-outlet> funktioniert
-    RouterLink     // Damit <a routerLink="..."> funktioniert
+    RouterOutlet, // Damit <router-outlet> funktioniert
+    RouterLink // Damit <a routerLink="..."> funktioniert
   ],
   template: `
     <h1>NextStop Frontend</h1>
@@ -20,7 +20,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     <hr />
     <router-outlet></router-outlet>
   `,
-  styles: [],
+  styles: []
 })
 export class AppComponent {
   title = 'nextstop-frontend';

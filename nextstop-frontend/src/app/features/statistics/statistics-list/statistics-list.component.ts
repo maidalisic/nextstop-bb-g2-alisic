@@ -8,14 +8,12 @@ import { StatisticsService, RouteStatistics } from '../statistics.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './statistics-list.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class StatisticsListComponent {
-  // Form-Eingaben
   startDate = '2024-01-01T00:00:00';
-  endDate   = '2024-12-31T23:59:59';
-  routeId?: number; // optional
-
+  endDate = '2024-12-31T23:59:59';
+  routeId?: number;
   stats: RouteStatistics[] = [];
 
   constructor(private statsService: StatisticsService) {}
@@ -23,8 +21,8 @@ export class StatisticsListComponent {
   loadStats() {
     const params = {
       startDate: this.startDate,
-      endDate:   this.endDate,
-      routeId:   this.routeId ? this.routeId : undefined
+      endDate: this.endDate,
+      routeId: this.routeId ? this.routeId : undefined,
     };
 
     this.statsService.getStatistics(params).subscribe({
@@ -32,7 +30,7 @@ export class StatisticsListComponent {
         this.stats = data;
         console.log('Statistics loaded:', data);
       },
-      error: (err) => console.error('Error loading stats:', err)
+      error: (err) => console.error('Error loading stats:', err),
     });
   }
 }

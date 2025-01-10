@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ConnectionsService, DirectConnection, ComplexConnection } from '../connections.service';
 
 @Component({
-  selector: 'wea5-connections-list',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './connections-list.component.html',
-  styleUrls: []
+    selector: 'wea5-connections-list',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './connections-list.component.html',
+    styleUrls: []
 })
 export class ConnectionsListComponent {
   // Form-Eingaben
