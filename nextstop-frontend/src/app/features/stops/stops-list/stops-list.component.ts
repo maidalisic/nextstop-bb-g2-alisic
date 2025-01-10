@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { StopsService, Stop } from '../stops.service';
 
 @Component({
-    selector: 'wea5-stops-list',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './stops-list.component.html',
-    styleUrls: []
+  selector: 'wea5-stops-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './stops-list.component.html',
+  styleUrls: [],
 })
 export class StopsListComponent implements OnInit {
   // Liste aller Stops (GET /api/STOP)
