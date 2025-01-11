@@ -1,50 +1,71 @@
-<div class="ui segment">
-    <h2 class="ui header">Feiertage</h2>
-  
-    <div class="ui form">
-      <div class="field">
-        <label>Datum</label>
-        <input [(ngModel)]="newHolidayDate" placeholder="YYYY-MM-DD" />
+<div class="holiday-container">
+  <h2>Feiertage</h2>
+
+  <!-- Formular zum Hinzufügen neuer Feiertage -->
+  <mat-card class="form-card">
+    <form>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Datum</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [(ngModel)]="newHolidayDate"
+          placeholder="Wähle ein Datum"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Bezeichnung</mat-label>
+        <input matInput [(ngModel)]="newHolidayName" placeholder="z.B. Ostermontag" />
+      </mat-form-field>
+
+      <mat-checkbox [(ngModel)]="newIsSchoolHoliday">Schulferien?</mat-checkbox>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="createHoliday()">Hinzufügen</button>
+        <button mat-button (click)="loadHolidays()">Neu laden</button>
       </div>
-  
-      <div class="field">
-        <label>Bezeichnung</label>
-        <input [(ngModel)]="newHolidayName" placeholder="z.B. Ostermontag" />
-      </div>
-  
-      <div class="field">
-        <div class="ui checkbox">
-          <input type="checkbox" [(ngModel)]="newIsSchoolHoliday" />
-          <label>Schulferien?</label>
-        </div>
-      </div>
-  
-      <button class="ui primary button" (click)="createHoliday()">Neuen Feiertag anlegen</button>
-    </div>
-  
-    <button class="ui button" (click)="loadHolidays()">Neu laden</button>
-  
-    <table class="ui celled table">
-      <thead>
-        <tr>
-          <th>Datum</th>
-          <th>Bezeichnung</th>
-          <th>Schulferien?</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let h of holidays">
-          <td>{{ h.date }}</td>
-          <td>{{ h.name }}</td>
-          <td>
-            <i *ngIf="h.isschoolholiday" class="green checkmark icon"></i>
-          </td>
-          <td>
-            <button class="ui red button" (click)="deleteHoliday(h)">Löschen</button>
-          </td>
-        </tr>
-      </tbody>
+    </form>
+  </mat-card>
+
+  <!-- Tabelle mit Feiertagen -->
+  <mat-card class="table-card">
+    <h3>Alle Feiertage</h3>
+    <table mat-table [dataSource]="holidays" class="mat-elevation-z1">
+      <!-- Datum -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Datum</th>
+        <td mat-cell *matCellDef="let holiday">{{ holiday.date | date: 'shortDate' }}</td>
+      </ng-container>
+
+      <!-- Bezeichnung -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Bezeichnung</th>
+        <td mat-cell *matCellDef="let holiday">{{ holiday.name }}</td>
+      </ng-container>
+
+      <!-- Schulferien -->
+      <ng-container matColumnDef="schoolHoliday">
+        <th mat-header-cell *matHeaderCellDef>Schulferien?</th>
+        <td mat-cell *matCellDef="let holiday">
+          <mat-icon *ngIf="holiday.isschoolholiday" color="primary">check</mat-icon>
+        </td>
+      </ng-container>
+
+      <!-- Aktionen -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+        <td mat-cell *matCellDef="let holiday">
+          <button mat-icon-button color="warn" (click)="deleteHoliday(holiday)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['date', 'name', 'schoolHoliday', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['date', 'name', 'schoolHoliday', 'actions'];"></tr>
     </table>
-  </div>
-  
+  </mat-card>
+</div>

@@ -1,99 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { StopsService, Stop } from '../stops.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'wea5-stops-list',
+  selector: 'app-stops-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+  ],
   templateUrl: './stops-list.component.html',
   styleUrls: [],
 })
 export class StopsListComponent implements OnInit {
-  // Liste aller Stops (GET /api/STOP)
-  stops: Stop[] = [];
+  newStopName: string = '';
+  newStopShortcode: string = '';
+  newStopLatitude: number | null = null;
+  newStopLongitude: number | null = null;
 
-  // Felder für "neuen Stop" anlegen
-  newStopName = '';
-  newStopShortcode = '';
-  newStopLatitude?: number;
-  newStopLongitude?: number;
+  searchQuery: string = '';
+  searchLat: number | null = null;
+  searchLong: number | null = null;
+  searchLimit: number | null = null;
 
-  // Felder für "Suchen"
-  searchQuery = '';
-  searchLat?: number;
-  searchLong?: number;
-  searchLimit?: number;
+  stops: any[] = [];
 
-  constructor(private stopsService: StopsService) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.loadStops();
-  }
+  ngOnInit(): void {}
 
-  /**
-   * Alle Stops laden
-   */
-  loadStops() {
-    this.stopsService.getAllStops().subscribe({
-      next: (data) => (this.stops = data),
-      error: (err) => console.error('Error loading stops', err),
-    });
-  }
-
-  /**
-   * Neuen Stop anlegen
-   */
-  createStop() {
-    const s: Stop = {
+  addStop() {
+    const newStop = {
       name: this.newStopName,
       shortcode: this.newStopShortcode,
       latitude: this.newStopLatitude,
       longitude: this.newStopLongitude,
     };
-    this.stopsService.createStop(s).subscribe({
-      next: (created) => {
-        console.log('Created stop:', created);
-        // Nach dem Anlegen neu laden
-        this.loadStops();
-      },
-      error: (err) => console.error('Error creating stop', err),
-    });
+
+    this.stops.push(newStop);
+
+    // Reset form
+    this.newStopName = '';
+    this.newStopShortcode = '';
+    this.newStopLatitude = null;
+    this.newStopLongitude = null;
   }
 
-  /**
-   * Stop löschen
-   */
-  deleteStop(stop: Stop) {
-    if (!stop.id) return;
-    this.stopsService.deleteStop(stop.id).subscribe({
-      next: () => {
-        console.log('Deleted stop ID', stop.id);
-        this.loadStops();
-      },
-      error: (err) => console.error('Error deleting stop', err),
-    });
-  }
-
-  /**
-   * Stops suchen
-   */
   searchStops() {
-    // Sammeln der Parameter
-    const options = {
-      query: this.searchQuery || undefined,
-      latitude: this.searchLat || undefined,
-      longitude: this.searchLong || undefined,
-      queryLimit: this.searchLimit || undefined,
-    };
+    console.log('Searching stops with query:', this.searchQuery);
+    // Add logic to fetch/search stops here
+  }
 
-    this.stopsService.searchStops(options).subscribe({
-      next: (found) => {
-        this.stops = found;
-        console.log('Found stops:', found);
-      },
-      error: (err) => console.error('Error searching stops', err),
-    });
+  deleteStop(index: number) {
+    this.stops.splice(index, 1);
   }
 }
