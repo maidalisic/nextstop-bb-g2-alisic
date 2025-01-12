@@ -2,17 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-/**
- * Beispielhaftes Interface – je nachdem, wie deine API das JSON zurückgibt.
- * Du könntest es anpassen, wenn dein Backend z.B. so was liefert:
- * {
- *   routeId: number,
- *   routeNumber: string,
- *   averageDelaySeconds: number,
- *   percentOnTime: number,
- *   ...
- * }
- */
 export interface RouteStatistics {
   route: {
     id: number;
@@ -38,12 +27,9 @@ export class StatisticsService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * GET /api/Statistics?startDate=...&endDate=...&routeId=...
-   */
   getStatistics(params: {
-    startDate?: string; // Optional machen
-    endDate?: string;  // Optional machen
+    startDate?: string;
+    endDate?: string;
     routeId?: number;
   }): Observable<RouteStatistics[]> {
     const queryParams: any = {};

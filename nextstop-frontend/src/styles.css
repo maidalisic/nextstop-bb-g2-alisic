@@ -1,4 +1,3 @@
-/* Global Styles */
 html,
 body {
   height: 100%;
@@ -7,7 +6,7 @@ body {
 }
 
 .container {
-  max-width: 1000px; /* Desktop-Breite */
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   display: flex;

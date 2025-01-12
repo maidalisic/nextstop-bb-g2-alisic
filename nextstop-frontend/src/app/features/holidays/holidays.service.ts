@@ -1,11 +1,9 @@
-// Pfad: src/app/features/holidays/holidays.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Holiday {
-  id?: number; // laut Swagger ist "id" number
+  id?: number; 
   date?: string;
   name?: string;
   isschoolholiday?: boolean;

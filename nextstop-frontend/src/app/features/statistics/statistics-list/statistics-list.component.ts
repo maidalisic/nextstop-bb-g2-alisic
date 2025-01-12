@@ -57,7 +57,7 @@ export class StatisticsListComponent implements AfterViewInit {
       if (this.chartCanvas?.nativeElement) {
         console.log('Canvas is ready.');
         this.canvasReady = true;
-        this.tryInitializeChart(); // Versuche den Chart zu initialisieren, wenn der Canvas bereit ist
+        this.tryInitializeChart();
         clearInterval(checkInterval);
       }
     }, 100);
@@ -80,7 +80,7 @@ export class StatisticsListComponent implements AfterViewInit {
         this.stats = data;
         this.dataLoaded = true;
         console.log('Statistics loaded:', this.stats);
-        this.tryInitializeChart(); // Versuche den Chart zu initialisieren, wenn die Daten geladen sind
+        this.tryInitializeChart();
       },
       error: (err) => console.error('Error loading stats:', err),
     });
@@ -90,7 +90,7 @@ export class StatisticsListComponent implements AfterViewInit {
     if (this.canvasReady && this.dataLoaded) {
       console.log('Both canvas and data are ready. Initializing chart...');
       this.initializeChart();
-      this.updateChart(); // Direkt die Daten nach der Initialisierung aktualisieren
+      this.updateChart();
     } else {
       if (!this.canvasReady) console.warn('Canvas not ready yet.');
       if (!this.dataLoaded) console.warn('Data not loaded yet.');

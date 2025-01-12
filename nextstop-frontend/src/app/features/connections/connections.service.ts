@@ -2,20 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-/**
- * Typ für die "Direct" Connection
- */
 export interface DirectConnection {
   routeId: number;
   fromStop: number;
   toStop: number;
-  departureTime: string; // z.B. "08:00:00"
-  arrivalTime: string;   // z.B. "09:00:00"
+  departureTime: string;
+  arrivalTime: string;
 }
 
-/**
- * Typ für "complex" Verbindungen (max 1 Umstieg)
- */
 export interface ComplexConnection {
   routeIdA: number;
   routeIdB: number;
@@ -36,14 +30,11 @@ export class ConnectionsService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * GET /api/connections/direct
-   */
   getDirectConnections(params: {
     from: number;
     to: number;
-    date: string; // z.B. "2025-03-15T00:00:00"
-    time: string; // z.B. "17:00:00"
+    date: string;
+    time: string;
     isArrivalTime?: boolean;
     maxResults?: number;
   }): Observable<{ connections: DirectConnection[] }> {
@@ -62,14 +53,11 @@ export class ConnectionsService {
     );
   }
 
-  /**
-   * GET /api/connections/complex
-   */
   getComplexConnections(params: {
     from: number;
     to: number;
-    date: string; // z.B. "2025-03-15T00:00:00"
-    time: string; // z.B. "17:00:00"
+    date: string;
+    time: string;
     isArrivalTime?: boolean;
     maxResults?: number;
     maxTransfers?: number;

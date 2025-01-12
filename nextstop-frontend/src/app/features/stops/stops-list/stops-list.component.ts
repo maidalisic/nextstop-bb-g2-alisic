@@ -29,19 +29,17 @@ import {AuthenticationService} from '../../../shared/authentication.service';
   styleUrls: [],
 })
 export class StopsListComponent implements OnInit {
-  // Anlegen von Stops
   newStopName: string = '';
   newStopShortcode: string = '';
   newStopLatitude: number | null = null;
   newStopLongitude: number | null = null;
 
-  // Suche
   searchQuery: string = '';
-  queryLimit: number = 3; // Standardlimit
-  isLocationSearch: boolean = false; // Standortsuche
-  isAllStopsLoaded: boolean = false; // Zeigt an, ob alle Stops geladen sind
-  lastRequestUrl: string = ''; // Speichert den letzten Request-URL für "Mehr laden"
-  noStopsFound: boolean = false; // Zeigt an, ob keine Ergebnisse gefunden wurden
+  queryLimit: number = 3;
+  isLocationSearch: boolean = false;
+  isAllStopsLoaded: boolean = false;
+  lastRequestUrl: string = '';
+  noStopsFound: boolean = false;
 
   stops: any[] = [];
   displayedColumns: string[] = ['name', 'shortcode', 'latitude', 'longitude', 'actions'];
@@ -53,7 +51,6 @@ export class StopsListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // Anlegen eines neuen Stops
   addStop() {
     const newStop = {
       name: this.newStopName,
@@ -62,7 +59,7 @@ export class StopsListComponent implements OnInit {
       longitude: this.newStopLongitude,
     };
 
-    this.stops.push(newStop); // Lokal hinzufügen
+    this.stops.push(newStop);
     this.updateDataSource();
 
     this.newStopName = '';
@@ -71,7 +68,6 @@ export class StopsListComponent implements OnInit {
     this.newStopLongitude = null;
   }
 
-  // Standortsuche
   searchByLocation() {
     if (!navigator.geolocation) {
       console.error('Geolocation wird von diesem Browser nicht unterstützt.');
@@ -84,8 +80,8 @@ export class StopsListComponent implements OnInit {
         const longitude = position.coords.longitude;
 
         this.isLocationSearch = true;
-        this.isAllStopsLoaded = false; // Zurücksetzen
-        this.noStopsFound = false; // Zurücksetzen
+        this.isAllStopsLoaded = false;
+        this.noStopsFound = false;
 
         this.lastRequestUrl = `${this.backendUrl}/search?latitude=${latitude}&longitude=${longitude}`;
         const limitedUrl = `${this.lastRequestUrl}&queryLimit=${this.queryLimit}`;
@@ -98,7 +94,6 @@ export class StopsListComponent implements OnInit {
     );
   }
 
-  // Suche nach Namen
   searchByName() {
     if (!this.searchQuery) {
       console.error('Bitte geben Sie einen Suchbegriff ein.');
@@ -106,8 +101,8 @@ export class StopsListComponent implements OnInit {
     }
 
     this.isLocationSearch = false;
-    this.isAllStopsLoaded = false; // Zurücksetzen
-    this.noStopsFound = false; // Zurücksetzen
+    this.isAllStopsLoaded = false;
+    this.noStopsFound = false;
 
     this.lastRequestUrl = `${this.backendUrl}/search?query=${this.searchQuery}`;
     const limitedUrl = `${this.lastRequestUrl}&queryLimit=${this.queryLimit}`;
@@ -115,26 +110,23 @@ export class StopsListComponent implements OnInit {
     this.fetchStops(limitedUrl);
   }
 
-  // Mehr Stops laden
   loadMoreStops() {
     if (this.isLocationSearch && this.lastRequestUrl) {
-      this.fetchStops(this.lastRequestUrl); // Request ohne Limit ausführen
-      this.isAllStopsLoaded = true; // Alle Stops geladen
+      this.fetchStops(this.lastRequestUrl);
+      this.isAllStopsLoaded = true;
     }
   }
 
-  // Weniger Stops anzeigen
   showFewerStops() {
     if (this.isLocationSearch && this.lastRequestUrl) {
       const limitedUrl = `${this.lastRequestUrl}&queryLimit=${this.queryLimit}`;
-      this.fetchStops(limitedUrl); // Begrenzten Request ausführen
-      this.isAllStopsLoaded = false; // Zurück zu begrenzter Anzeige
+      this.fetchStops(limitedUrl);
+      this.isAllStopsLoaded = false;
     }
   }
 
-  // Stop löschen
   deleteStop(index: number) {
-    this.stops.splice(index, 1); // Lokal entfernen
+    this.stops.splice(index, 1);
     this.updateDataSource();
   }
 
@@ -142,11 +134,11 @@ export class StopsListComponent implements OnInit {
     this.http.get<any[]>(url).subscribe((data) => {
       this.stops = data;
       this.updateDataSource();
-      this.noStopsFound = data.length === 0; // Überprüfen, ob keine Ergebnisse gefunden wurden
+      this.noStopsFound = data.length === 0;
     });
   }
 
   private updateDataSource() {
-    this.dataSource.data = this.stops; // Aktualisiert die Tabelle
+    this.dataSource.data = this.stops;
   }
 }
