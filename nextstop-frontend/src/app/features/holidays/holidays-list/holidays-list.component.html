@@ -1,4 +1,4 @@
-<div class="holiday-container">
+<div class="container">
   <h2>Feiertage</h2>
 
   <!-- Formular zum Hinzufügen neuer Feiertage -->
@@ -10,6 +10,7 @@
           matInput
           [matDatepicker]="picker"
           [(ngModel)]="newHolidayDate"
+          name="holidayDate"
           placeholder="Wähle ein Datum"
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -18,10 +19,17 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Bezeichnung</mat-label>
-        <input matInput [(ngModel)]="newHolidayName" placeholder="z.B. Ostermontag" />
+        <input
+          matInput
+          [(ngModel)]="newHolidayName"
+          name="holidayName"
+          placeholder="z.B. Ostermontag"
+        />
       </mat-form-field>
 
-      <mat-checkbox [(ngModel)]="newIsSchoolHoliday">Schulferien?</mat-checkbox>
+      <mat-checkbox [(ngModel)]="newIsSchoolHoliday" name="isSchoolHoliday">
+        Schulferien?
+      </mat-checkbox>
 
       <div class="actions">
         <button mat-raised-button color="primary" (click)="createHoliday()">Hinzufügen</button>

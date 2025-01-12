@@ -46,7 +46,7 @@ import { RouterOutlet } from '@angular/router';
   ],
 })
 export class AppComponent {
-  title = 'NextStop Frontend';
+  title = 'NextStop';
 
   selectedTabIndex: number = 0;
 
