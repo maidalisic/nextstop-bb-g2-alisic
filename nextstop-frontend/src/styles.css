@@ -90,14 +90,49 @@ mat-form-field {
 }
 
 .table-card table {
-    width: 100%;
-    border-spacing: 0;
-    margin-top: 10px;
-  }
-  
-  .mat-header-row, .mat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
+  width: 100%;
+  border-spacing: 0;
+  margin-top: 10px;
+}
+
+.mat-header-row,
+.mat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stops-container,
+.schedules-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.stop-card,
+.schedule-card {
+  width: 200px;
+  min-height: 100px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.stop-card p,
+.schedule-card p {
+  margin: 5px 0;
+}
+
+.mat-card {
+  padding: 16px;
+}
+
+.mat-raised-button {
+  margin-top: 10px;
+}

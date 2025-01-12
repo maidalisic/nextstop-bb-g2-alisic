@@ -1,54 +1,119 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RoutesService, RouteWithStop } from '../routes.service';
+import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { RoutesService, RouteWithStop, Schedule, Stop } from '../routes.service';
 
 @Component({
-  selector: 'wea5-routes-list',
+  selector: 'app-routes-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   templateUrl: './routes-list.component.html',
   styleUrls: [],
 })
 export class RoutesListComponent implements OnInit {
   routes: RouteWithStop[] = [];
-  newRouteNumber = '';
-  newValidFrom = '2025-01-01T00:00:00';
-  newValidTo = '2025-12-31T23:59:59';
-  newIsWeekend = false;
+  allStops: Stop[] = [];
+  selectedRoute: RouteWithStop | null = null;
+  routeIdToSearch: number | null = null;
+
+  newRoute: RouteWithStop = {
+    routenumber: '',
+    validfrom: '',
+    validto: '',
+    isweekend: false,
+    stops: [],
+    schedules: [],
+  };
+
+  selectedStop: Stop | null = null;
+  newSchedule: Schedule = { stopid: 0, scheduledtime: '', isholiday: false };
 
   constructor(private routesService: RoutesService) {}
 
   ngOnInit(): void {
-    this.loadRoutes();
+    this.loadAllStops();
   }
 
-  loadRoutes() {
-    this.routesService.getAllRoutes().subscribe({
-      next: (data) => {
-        this.routes = data;
-        console.log('Loaded routes:', data);
-      },
-      error: (err) => console.error('Error loading routes', err),
+  loadAllRoutes() {
+    this.routesService.getAllRoutes().subscribe(data => {
+      this.routes = data || [];
     });
   }
 
-  createRoute() {
-    const r: RouteWithStop = {
-      routenumber: this.newRouteNumber,
-      validfrom: this.newValidFrom,
-      validto: this.newValidTo,
-      isweekend: this.newIsWeekend,
-      stops: [],
-      schedules: [],
-    };
+  loadRouteById() {
+    if (this.routeIdToSearch) {
+      this.routesService.getRouteById(this.routeIdToSearch).subscribe(data => {
+        this.selectedRoute = data || null;
+      });
+    }
+  }
 
-    this.routesService.createRoute(r).subscribe({
-      next: (created) => {
-        console.log('Created route:', created);
-        this.loadRoutes();
-      },
-      error: (err) => console.error('Error creating route:', err),
+  loadAllStops() {
+    this.routesService.getAllStops().subscribe(data => {
+      this.allStops = data || [];
+    });
+  }
+
+  addStop() {
+    if (this.selectedStop) {
+      const stopOrder = (this.newRoute.stops?.length || 0) + 1;
+      this.newRoute.stops?.push({
+        stopid: this.selectedStop.id,
+        stoporder: stopOrder,
+      });
+      this.selectedStop = null;
+    }
+  }
+
+  getStopName(stopId?: number): string {
+    if (!stopId) {
+      return 'Unbekannt';
+    }
+    const stop = this.allStops.find(s => s.id === stopId);
+    return stop ? stop.name : 'Unbekannt';
+  }
+
+  addSchedule() {
+    if (this.newSchedule.stopid && this.newSchedule.scheduledtime) {
+      this.newRoute.schedules?.push({ ...this.newSchedule });
+      this.newSchedule = { stopid: 0, scheduledtime: '', isholiday: false };
+    }
+  }
+
+  createRoute() {
+    this.routesService.createRoute(this.newRoute).subscribe(() => {
+      this.loadAllRoutes();
+      this.newRoute = {
+        routenumber: '',
+        validfrom: '',
+        validto: '',
+        isweekend: false,
+        stops: [],
+        schedules: [],
+      };
     });
   }
 }

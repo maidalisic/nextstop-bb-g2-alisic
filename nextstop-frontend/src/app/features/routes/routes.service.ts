@@ -3,16 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 /**
- * Laut Swagger:
- * "RouteWithStop": {
- *   "id": number,
- *   "routenumber": string,
- *   "validfrom": string (DateTime),
- *   "validto": string (DateTime),
- *   "isweekend": boolean,
- *   "stops": [ { "routeid": number, "stopid": number, "stoporder": number } ],
- *   "schedules": [ { "id": number, "routeid": number, "stopid": number, "scheduledtime": string, "isholiday": boolean } ]
- * }
+ * Struktur für Stop
+ */
+export interface Stop {
+  id: number; // Backend gibt "id" zurück, nicht "stopid"
+  name: string;
+}
+
+/**
+ * Struktur für RouteStop, Schedule und RouteWithStop (wie bereits vorhanden)
  */
 export interface RouteStop {
   routeid?: number;
@@ -24,15 +23,15 @@ export interface Schedule {
   id?: number;
   routeid?: number;
   stopid?: number;
-  scheduledtime?: string;  // z.B. "18:10:00" oder DateTime?
+  scheduledtime?: string;
   isholiday?: boolean;
 }
 
 export interface RouteWithStop {
   id?: number;
   routenumber?: string;
-  validfrom?: string;    // e.g. "2025-01-01T00:00:00"
-  validto?: string;      // e.g. "2025-12-31T00:00:00"
+  validfrom?: string;
+  validto?: string;
   isweekend?: boolean;
   stops?: RouteStop[];
   schedules?: Schedule[];
@@ -42,15 +41,14 @@ export interface RouteWithStop {
   providedIn: 'root'
 })
 export class RoutesService {
-  // Dein Backend: http://localhost:5213
-  // Endpunkt: /api/ROUTE
   private baseUrl = 'http://localhost:5213/api/ROUTE';
+  private stopsUrl = 'http://localhost:5213/api/STOP'; // Endpunkt für Stops
 
   constructor(private http: HttpClient) {}
 
   /**
    * GET /api/ROUTE
-   * Liefert alle Routen (als Array von RouteWithStop)
+   * Alle Routen abrufen
    */
   getAllRoutes(): Observable<RouteWithStop[]> {
     return this.http.get<RouteWithStop[]>(this.baseUrl);
@@ -66,9 +64,17 @@ export class RoutesService {
 
   /**
    * POST /api/ROUTE
-   * Neue Route anlegen (inkl. stops, schedules etc.)
+   * Neue Route erstellen
    */
   createRoute(newRoute: RouteWithStop): Observable<RouteWithStop> {
     return this.http.post<RouteWithStop>(this.baseUrl, newRoute);
+  }
+
+  /**
+   * GET /api/STOP
+   * Alle Stops laden
+   */
+  getAllStops(): Observable<Stop[]> {
+    return this.http.get<Stop[]>(this.stopsUrl);
   }
 }
