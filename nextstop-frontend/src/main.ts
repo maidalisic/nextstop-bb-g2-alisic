@@ -5,11 +5,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {appConfig} from './app/app.config';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    BrowserAnimationsModule,
-    provideRouter(routes),   // Routing
-    provideHttpClient(), provideAnimationsAsync(),     // HTTP-Client für API-Aufrufe
-  ],
-}).catch(err => console.error(err));
+bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));

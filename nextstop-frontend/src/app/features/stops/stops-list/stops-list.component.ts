@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource } from '@angular/material/table';
+import {AuthenticationService} from '../../../shared/authentication.service';
 
 @Component({
   selector: 'app-stops-list',
@@ -48,7 +49,7 @@ export class StopsListComponent implements OnInit {
 
   private backendUrl = 'http://localhost:5213/api/STOP';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {}
 

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import {canNavigateToAdminGuard} from './can-navigate-to-admin.guard';
 
 export const routes: Routes = [
   {
@@ -6,7 +7,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/holidays/holidays-list/holidays-list.component').then(
         (m) => m.HolidaysListComponent
-      ),
+      ), canActivate:[canNavigateToAdminGuard]
   },
   {
     path: 'stops',
@@ -27,7 +28,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/routes/routes-list/routes-list.component').then(
         (m) => m.RoutesListComponent
-      ),
+      ), canActivate:[canNavigateToAdminGuard]
   },
   {
     path: 'statistics',
@@ -36,6 +37,6 @@ export const routes: Routes = [
         (m) => m.StatisticsListComponent
       ),
   },
-  { path: '', redirectTo: 'holidays', pathMatch: 'full' },
-  { path: '**', redirectTo: 'holidays' },
+  { path: '', redirectTo: 'connections', pathMatch: 'full' },
+  { path: '**', redirectTo: 'connections' },
 ];

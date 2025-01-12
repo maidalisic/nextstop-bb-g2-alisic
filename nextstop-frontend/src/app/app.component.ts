@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterOutlet } from '@angular/router';
+import {OAuthService} from 'angular-oauth2-oidc';
+import {authConfig} from './auth.config';
 
 @Component({
   selector: 'wea5-root',
@@ -50,8 +52,14 @@ export class AppComponent {
 
   selectedTabIndex: number = 0;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private oauthService: OAuthService) {
     this.updateSelectedTab();
+    this.configureWithNewConfigApi();
+  }
+
+  private configureWithNewConfigApi() {
+    this.oauthService.configure(authConfig);
+    this.oauthService.loadDiscoveryDocumentAndTryLogin();
   }
 
   onTabChange(index: number): void {
