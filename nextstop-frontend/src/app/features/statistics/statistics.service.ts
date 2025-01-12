@@ -14,13 +14,20 @@ import { Observable } from 'rxjs';
  * }
  */
 export interface RouteStatistics {
-  routeId: number;
-  // ggf. weitere Felder
-  averageDelaySeconds: number;
-  onTimePercent: number;
-  lightlyDelayedPercent: number;
-  delayedPercent: number;
-  heavilyDelayedPercent: number;
+  route: {
+    id: number;
+    routeNumber: string;
+    validFrom: string;
+    validTo: string;
+    isWeekend: boolean;
+  };
+  statistics: {
+    averageDelay: number;
+    onTimePercentage: number;
+    slightlyLatePercentage: number;
+    latePercentage: number;
+    significantlyLatePercentage: number;
+  };
 }
 
 @Injectable({
@@ -35,18 +42,22 @@ export class StatisticsService {
    * GET /api/Statistics?startDate=...&endDate=...&routeId=...
    */
   getStatistics(params: {
-    startDate: string;  // z.B. "2024-01-01T00:00:00"
-    endDate:   string;  // z.B. "2024-12-31T23:59:59"
-    routeId?:  number;
+    startDate?: string; // Optional machen
+    endDate?: string;  // Optional machen
+    routeId?: number;
   }): Observable<RouteStatistics[]> {
-    const queryParams: any = {
-      startDate: params.startDate,
-      endDate:   params.endDate,
-    };
+    const queryParams: any = {};
+  
+    if (params.startDate) {
+      queryParams.startDate = params.startDate;
+    }
+    if (params.endDate) {
+      queryParams.endDate = params.endDate;
+    }
     if (params.routeId) {
       queryParams.routeId = params.routeId;
     }
-
+  
     return this.http.get<RouteStatistics[]>(this.baseUrl, { params: queryParams });
   }
 }

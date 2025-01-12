@@ -25,38 +25,37 @@
       <button mat-raised-button color="primary" (click)="loadStats()">Statistik laden</button>
     </mat-card>
   
-    <!-- Tabelle für Statistiken -->
     <mat-card *ngIf="stats.length > 0">
       <h3>Statistik Ergebnisse</h3>
       <table mat-table [dataSource]="stats" class="mat-elevation-z8">
         <ng-container matColumnDef="routeId">
           <th mat-header-cell *matHeaderCellDef>Route ID</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.routeId }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.route.id }}</td>
         </ng-container>
   
-        <ng-container matColumnDef="averageDelaySeconds">
+        <ng-container matColumnDef="averageDelay">
           <th mat-header-cell *matHeaderCellDef>Ø Verspätung (Sek.)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.averageDelaySeconds }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.averageDelay }}</td>
         </ng-container>
   
-        <ng-container matColumnDef="onTimePercent">
+        <ng-container matColumnDef="onTimePercentage">
           <th mat-header-cell *matHeaderCellDef>Pünktlich (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.onTimePercent }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.onTimePercentage }}</td>
         </ng-container>
   
-        <ng-container matColumnDef="lightlyDelayedPercent">
+        <ng-container matColumnDef="slightlyLatePercentage">
           <th mat-header-cell *matHeaderCellDef>Leicht verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.lightlyDelayedPercent }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.slightlyLatePercentage }}</td>
         </ng-container>
   
-        <ng-container matColumnDef="delayedPercent">
+        <ng-container matColumnDef="latePercentage">
           <th mat-header-cell *matHeaderCellDef>Verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.delayedPercent }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.latePercentage }}</td>
         </ng-container>
   
-        <ng-container matColumnDef="heavilyDelayedPercent">
+        <ng-container matColumnDef="significantlyLatePercentage">
           <th mat-header-cell *matHeaderCellDef>Stark verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.heavilyDelayedPercent }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.significantlyLatePercentage }}</td>
         </ng-container>
   
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -64,7 +63,6 @@
       </table>
     </mat-card>
   
-    <!-- Diagramm für Visualisierung -->
     <mat-card *ngIf="stats.length > 0">
       <h3>Visualisierung</h3>
       <canvas #chartCanvas></canvas>

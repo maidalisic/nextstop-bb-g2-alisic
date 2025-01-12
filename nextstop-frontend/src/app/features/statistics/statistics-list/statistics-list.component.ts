@@ -29,95 +29,103 @@ import Chart from 'chart.js/auto';
   styleUrls: [],
 })
 export class StatisticsListComponent implements AfterViewInit {
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef;
-  startDate = new Date('2024-01-01');
-  endDate = new Date('2026-12-31');
+  @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
+  startDate: Date | null = new Date('2024-01-01');
+  endDate: Date | null = new Date('2026-12-31');
   routeId?: number;
   stats: RouteStatistics[] = [];
   displayedColumns: string[] = [
     'routeId',
-    'averageDelaySeconds',
-    'onTimePercent',
-    'lightlyDelayedPercent',
-    'delayedPercent',
-    'heavilyDelayedPercent',
+    'averageDelay',
+    'onTimePercentage',
+    'slightlyLatePercentage',
+    'latePercentage',
+    'significantlyLatePercentage',
   ];
   chart: Chart | null = null;
 
   constructor(private statsService: StatisticsService) {}
 
   ngAfterViewInit(): void {
-    this.initChart();
+    console.log('View initialized');
   }
 
   loadStats() {
-    const params = {
-      startDate: this.formatDate(this.startDate), // Datum formatieren
-      endDate: this.formatDate(this.endDate),    // Datum formatieren
-      routeId: this.routeId ? this.routeId : undefined,
-    };
+    const params: any = {};
+    if (this.startDate) {
+      params.startDate = this.formatDate(this.startDate);
+    }
+    if (this.endDate) {
+      params.endDate = this.formatDate(this.endDate);
+    }
+    if (this.routeId) {
+      params.routeId = this.routeId;
+    }
 
     this.statsService.getStatistics(params).subscribe({
       next: (data) => {
         this.stats = data;
+        console.log('Statistics loaded:', this.stats);
+
+        this.ensureChartInitialized();
         this.updateChart();
-        console.log('Statistics loaded:', data);
       },
       error: (err) => console.error('Error loading stats:', err),
     });
   }
 
-  // Funktion zur Formatierung des Datums
   private formatDate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Monate 0-basiert
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    return `${year}-${month}-${day}T00:00:00`;
   }
 
-  initChart() {
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Pünktlich (%)',
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            data: [],
+  private ensureChartInitialized() {
+    if (!this.chart && this.chartCanvas?.nativeElement) {
+      console.log('Initializing chart...');
+      const ctx = this.chartCanvas.nativeElement.getContext('2d');
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: [],
+            datasets: [
+              { label: 'Pünktlich (%)', backgroundColor: 'rgba(75, 192, 192, 0.5)', data: [] },
+              { label: 'Leicht verspätet (%)', backgroundColor: 'rgba(255, 206, 86, 0.5)', data: [] },
+              { label: 'Verspätet (%)', backgroundColor: 'rgba(54, 162, 235, 0.5)', data: [] },
+              { label: 'Stark verspätet (%)', backgroundColor: 'rgba(255, 99, 132, 0.5)', data: [] },
+            ],
           },
-          {
-            label: 'Leicht verspätet (%)',
-            backgroundColor: 'rgba(255, 206, 86, 0.5)',
-            data: [],
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+            },
           },
-          {
-            label: 'Verspätet (%)',
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            data: [],
-          },
-          {
-            label: 'Stark verspätet (%)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            data: [],
-          },
-        ],
-      },
-    });
+        });
+      } else {
+        console.error('Failed to get 2D context for canvas.');
+      }
+    }
   }
 
-  updateChart() {
-    if (!this.chart) return;
+  private updateChart() {
+    if (!this.chart || this.stats.length === 0) {
+      console.warn('Chart is not initialized or no stats available.');
+      return;
+    }
 
-    const labels = this.stats.map((stat) => `Route ${stat.routeId}`);
-    const onTimeData = this.stats.map((stat) => stat.onTimePercent);
-    const lightlyLateData = this.stats.map((stat) => stat.lightlyDelayedPercent);
-    const lateData = this.stats.map((stat) => stat.delayedPercent);
-    const heavilyLateData = this.stats.map((stat) => stat.heavilyDelayedPercent);
+    const labels = this.stats.map((stat) => `Route ${stat.route.routeNumber}`);
+    const onTimeData = this.stats.map((stat) => stat.statistics.onTimePercentage);
+    const lightlyLateData = this.stats.map((stat) => stat.statistics.slightlyLatePercentage);
+    const lateData = this.stats.map((stat) => stat.statistics.latePercentage);
+    const heavilyLateData = this.stats.map((stat) => stat.statistics.significantlyLatePercentage);
+
+    console.log('Updating chart with labels:', labels);
+    console.log('On-time data:', onTimeData);
 
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = onTimeData;
