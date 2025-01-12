@@ -1,39 +1,76 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'wea5-root',
-  standalone: true, // Diese Komponente ist standalone
+  standalone: true,
   imports: [
-    RouterOutlet, // Ermöglicht das Routing
-    RouterLink,   // Ermöglicht Router-Links
+    MatToolbarModule,
+    MatTabsModule,
+    RouterOutlet,
   ],
   template: `
-    <header>
-      <h1>NextStop Frontend</h1>
-      <nav class="ui secondary pointing menu">
-        <a class="item" routerLink="/holidays" routerLinkActive="active">Feiertage</a>
-        <a class="item" routerLink="/stops" routerLinkActive="active">Haltestellen</a>
-        <a class="item" routerLink="/connections" routerLinkActive="active">Verbindungen</a>
-        <a class="item" routerLink="/routes" routerLinkActive="active">Routen</a>
-        <a class="item" routerLink="/statistics" routerLinkActive="active">Statistik</a>
-      </nav>
-    </header>
-    <main class="ui container">
+    <mat-toolbar color="primary">
+      <span>{{ title }}</span>
+    </mat-toolbar>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+      <mat-tab label="Feiertage"></mat-tab>
+      <mat-tab label="Haltestellen"></mat-tab>
+      <mat-tab label="Verbindungen"></mat-tab>
+      <mat-tab label="Routen"></mat-tab>
+      <mat-tab label="Statistik"></mat-tab>
+    </mat-tab-group>
+    <main>
       <router-outlet></router-outlet>
     </main>
   `,
   styles: [
     `
-      header {
-        margin-bottom: 2rem;
+      mat-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      mat-tab-group {
+        margin-top: 1rem;
+        background: #fff;
       }
       main {
         margin-top: 2rem;
+        padding: 1rem;
       }
-    `
+    `,
   ],
 })
 export class AppComponent {
   title = 'NextStop Frontend';
+
+  selectedTabIndex: number = 0;
+
+  constructor(private router: Router) {
+    this.updateSelectedTab();
+  }
+
+  onTabChange(index: number): void {
+    const routes = ['/holidays', '/stops', '/connections', '/routes', '/statistics'];
+    if (index < routes.length) {
+      this.router.navigate([routes[index]]);
+    }
+  }
+
+  updateSelectedTab(): void {
+    const routeToIndexMap: { [key: string]: number } = {
+      '/holidays': 0,
+      '/stops': 1,
+      '/connections': 2,
+      '/routes': 3,
+      '/statistics': 4,
+    };
+
+    const currentRoute = this.router.url.split('?')[0];
+    this.selectedTabIndex = routeToIndexMap[currentRoute] ?? 0;
+  }
 }
