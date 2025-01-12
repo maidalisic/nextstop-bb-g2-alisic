@@ -32,35 +32,35 @@
           <th mat-header-cell *matHeaderCellDef>Route ID</th>
           <td mat-cell *matCellDef="let stat">{{ stat.route.id }}</td>
         </ng-container>
-  
+      
         <ng-container matColumnDef="averageDelay">
           <th mat-header-cell *matHeaderCellDef>Ø Verspätung (Sek.)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.statistics.averageDelay }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.averageDelay | number:'1.3-3' }}</td>
         </ng-container>
-  
+      
         <ng-container matColumnDef="onTimePercentage">
           <th mat-header-cell *matHeaderCellDef>Pünktlich (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.statistics.onTimePercentage }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.onTimePercentage | number:'1.3-3' }}</td>
         </ng-container>
-  
+      
         <ng-container matColumnDef="slightlyLatePercentage">
           <th mat-header-cell *matHeaderCellDef>Leicht verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.statistics.slightlyLatePercentage }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.slightlyLatePercentage | number:'1.3-3' }}</td>
         </ng-container>
-  
+      
         <ng-container matColumnDef="latePercentage">
           <th mat-header-cell *matHeaderCellDef>Verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.statistics.latePercentage }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.latePercentage | number:'1.3-3' }}</td>
         </ng-container>
-  
+      
         <ng-container matColumnDef="significantlyLatePercentage">
           <th mat-header-cell *matHeaderCellDef>Stark verspätet (%)</th>
-          <td mat-cell *matCellDef="let stat">{{ stat.statistics.significantlyLatePercentage }}</td>
+          <td mat-cell *matCellDef="let stat">{{ stat.statistics.significantlyLatePercentage | number:'1.3-3' }}</td>
         </ng-container>
-  
+      
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+      </table>      
     </mat-card>
   
     <mat-card *ngIf="stats.length > 0">
