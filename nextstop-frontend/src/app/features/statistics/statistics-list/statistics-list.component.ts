@@ -43,11 +43,24 @@ export class StatisticsListComponent implements AfterViewInit {
     'significantlyLatePercentage',
   ];
   chart: Chart | null = null;
+  canvasReady = false;
+  dataLoaded = false;
 
   constructor(private statsService: StatisticsService) {}
 
   ngAfterViewInit(): void {
-    console.log('View initialized');
+    this.waitForCanvas();
+  }
+
+  private waitForCanvas() {
+    const checkInterval = setInterval(() => {
+      if (this.chartCanvas?.nativeElement) {
+        console.log('Canvas is ready.');
+        this.canvasReady = true;
+        this.tryInitializeChart(); // Versuche den Chart zu initialisieren, wenn der Canvas bereit ist
+        clearInterval(checkInterval);
+      }
+    }, 100);
   }
 
   loadStats() {
@@ -65,13 +78,23 @@ export class StatisticsListComponent implements AfterViewInit {
     this.statsService.getStatistics(params).subscribe({
       next: (data) => {
         this.stats = data;
+        this.dataLoaded = true;
         console.log('Statistics loaded:', this.stats);
-
-        this.ensureChartInitialized();
-        this.updateChart();
+        this.tryInitializeChart(); // Versuche den Chart zu initialisieren, wenn die Daten geladen sind
       },
       error: (err) => console.error('Error loading stats:', err),
     });
+  }
+
+  private tryInitializeChart() {
+    if (this.canvasReady && this.dataLoaded) {
+      console.log('Both canvas and data are ready. Initializing chart...');
+      this.initializeChart();
+      this.updateChart(); // Direkt die Daten nach der Initialisierung aktualisieren
+    } else {
+      if (!this.canvasReady) console.warn('Canvas not ready yet.');
+      if (!this.dataLoaded) console.warn('Data not loaded yet.');
+    }
   }
 
   private formatDate(date: Date): string {
@@ -81,34 +104,37 @@ export class StatisticsListComponent implements AfterViewInit {
     return `${year}-${month}-${day}T00:00:00`;
   }
 
-  private ensureChartInitialized() {
-    if (!this.chart && this.chartCanvas?.nativeElement) {
-      console.log('Initializing chart...');
-      const ctx = this.chartCanvas.nativeElement.getContext('2d');
-      if (ctx) {
-        this.chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: [],
-            datasets: [
-              { label: 'Pünktlich (%)', backgroundColor: 'rgba(75, 192, 192, 0.5)', data: [] },
-              { label: 'Leicht verspätet (%)', backgroundColor: 'rgba(255, 206, 86, 0.5)', data: [] },
-              { label: 'Verspätet (%)', backgroundColor: 'rgba(54, 162, 235, 0.5)', data: [] },
-              { label: 'Stark verspätet (%)', backgroundColor: 'rgba(255, 99, 132, 0.5)', data: [] },
-            ],
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                position: 'top',
-              },
+  private initializeChart() {
+    if (this.chart) {
+      console.log('Chart already initialized.');
+      return;
+    }
+
+    console.log('Initializing chart...');
+    const ctx = this.chartCanvas?.nativeElement.getContext('2d');
+    if (ctx) {
+      this.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Pünktlich (%)', backgroundColor: 'rgba(75, 192, 192, 0.5)', data: [] },
+            { label: 'Leicht verspätet (%)', backgroundColor: 'rgba(255, 206, 86, 0.5)', data: [] },
+            { label: 'Verspätet (%)', backgroundColor: 'rgba(54, 162, 235, 0.5)', data: [] },
+            { label: 'Stark verspätet (%)', backgroundColor: 'rgba(255, 99, 132, 0.5)', data: [] },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
             },
           },
-        });
-      } else {
-        console.error('Failed to get 2D context for canvas.');
-      }
+        },
+      });
+    } else {
+      console.error('Failed to get 2D context for canvas.');
     }
   }
 
