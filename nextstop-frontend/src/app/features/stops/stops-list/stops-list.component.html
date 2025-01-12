@@ -1,31 +1,33 @@
 <div class="container">
   <!-- Abschnitt: Stops anlegen -->
-  <mat-card class="form-card">
-    <h2>Neuen Stop anlegen</h2>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="newStopName" name="newStopName" placeholder="z.B. FH Hagenberg" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Shortcode</mat-label>
-      <input matInput [(ngModel)]="newStopShortcode" name="newStopShortcode" placeholder="z.B. FHHGB" />
-    </mat-form-field>
-
-    <div class="coordinates">
-      <mat-form-field appearance="outline" class="coordinate-field">
-        <mat-label>Latitude</mat-label>
-        <input matInput type="number" [(ngModel)]="newStopLatitude" name="newStopLatitude" placeholder="48.3683..." />
+  @if (authenticationService.isLoggedIn()) {
+    <mat-card class="form-card">
+      <h2>Neuen Stop anlegen</h2>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="newStopName" name="newStopName" placeholder="z.B. FH Hagenberg" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="coordinate-field">
-        <mat-label>Longitude</mat-label>
-        <input matInput type="number" [(ngModel)]="newStopLongitude" name="newStopLongitude" placeholder="14.5151..." />
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Shortcode</mat-label>
+        <input matInput [(ngModel)]="newStopShortcode" name="newStopShortcode" placeholder="z.B. FHHGB" />
       </mat-form-field>
-    </div>
 
-    <button mat-raised-button color="primary" (click)="addStop()">Neuen Stop anlegen</button>
-  </mat-card>
+      <div class="coordinates">
+        <mat-form-field appearance="outline" class="coordinate-field">
+          <mat-label>Latitude</mat-label>
+          <input matInput type="number" [(ngModel)]="newStopLatitude" name="newStopLatitude" placeholder="48.3683..." />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="coordinate-field">
+          <mat-label>Longitude</mat-label>
+          <input matInput type="number" [(ngModel)]="newStopLongitude" name="newStopLongitude" placeholder="14.5151..." />
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button color="primary" (click)="addStop()">Neuen Stop anlegen</button>
+    </mat-card>
+  }
 
   <!-- Abschnitt: Stops suchen -->
   <mat-card class="form-card">

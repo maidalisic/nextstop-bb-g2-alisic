@@ -51,12 +51,16 @@ curl -s -X POST "$KEYCLOAK_URL/admin/realms/$REALM_NAME/clients" \
 
 echo "Client $CLIENT_ID created."
 
-# Disable Client Authentication
-echo "Disabling Client Authentication for $CLIENT_ID..."
+# Retrieve the created Client ID (KEY)
+echo "Retrieving client ID key..."
 CLIENT_ID_KEY=$(curl -s -X GET "$KEYCLOAK_URL/admin/realms/$REALM_NAME/clients" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   | jq -r '.[] | select(.clientId=="'"$CLIENT_ID"'") | .id')
 
+echo "Client Key = $CLIENT_ID_KEY"
+
+# Update the client to set valid Redirect URIs, Web Origins, etc.
+echo "Updating client $CLIENT_ID with redirect URIs and web origins..."
 curl -s -X PUT "$KEYCLOAK_URL/admin/realms/$REALM_NAME/clients/$CLIENT_ID_KEY" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
@@ -65,10 +69,12 @@ curl -s -X PUT "$KEYCLOAK_URL/admin/realms/$REALM_NAME/clients/$CLIENT_ID_KEY" \
     "enabled": true,
     "protocol": "openid-connect",
     "publicClient": true,
-    "directAccessGrantsEnabled": true
+    "directAccessGrantsEnabled": true,
+    "redirectUris": ["http://localhost:4200/*"],
+    "webOrigins": ["http://localhost:4200"]
   }'
 
-echo "Client Authentication disabled for $CLIENT_ID."
+echo "Redirect URIs and web origins set for $CLIENT_ID."
 
 # Create the Role
 echo "Creating role $ROLE_NAME..."
