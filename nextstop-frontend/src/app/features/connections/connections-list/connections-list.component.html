@@ -1,96 +1,113 @@
-<h2>Fahrplan-Abfragen (Connections)</h2>
+<div class="container">
+  <!-- Form-Bereich für Verbindungsanfragen -->
+  <mat-card class="form-card">
+    <h2>Verbindungs-Suche</h2>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Von (Haltestelle-ID)</mat-label>
+      <input matInput type="number" [(ngModel)]="fromStop" placeholder="z.B. 1" />
+    </mat-form-field>
 
-<div class="ui segment">
-  <h3 class="ui header">Eingabe</h3>
-  <div class="ui form">
-    <div class="field">
-      <label>From Stop (ID)</label>
-      <input type="number" [(ngModel)]="fromStop" />
-    </div>
-    <div class="field">
-      <label>To Stop (ID)</label>
-      <input type="number" [(ngModel)]="toStop" />
-    </div>
-    <div class="field">
-      <label>Datum</label>
-      <input type="text" [(ngModel)]="date" placeholder="2025-03-15" />
-    </div>
-    <div class="field">
-      <label>Uhrzeit</label>
-      <input type="text" [(ngModel)]="time" placeholder="17:00:00" />
-    </div>
-    <div class="field">
-      <label>Ist Ankunftszeit?</label>
-      <input type="checkbox" [(ngModel)]="isArrivalTime" />
-    </div>
-    <div class="field">
-      <label>Max Results</label>
-      <input type="number" [(ngModel)]="maxResults" />
-    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nach (Haltestelle-ID)</mat-label>
+      <input matInput type="number" [(ngModel)]="toStop" placeholder="z.B. 2" />
+    </mat-form-field>
 
-    <button class="ui primary button" (click)="searchDirect()">
-      Suche DIRECT
-    </button>
-    <button class="ui button" (click)="searchComplex()">
-      Suche COMPLEX
-    </button>
-  </div>
-</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Datum</mat-label>
+      <input matInput type="text" [(ngModel)]="date" placeholder="2025-03-15" />
+    </mat-form-field>
 
-<!-- Direct Results -->
-<div class="ui segment">
-  <h3 class="ui header">Direct Connections</h3>
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th>RouteId</th>
-        <th>FromStop</th>
-        <th>ToStop</th>
-        <th>DepartureTime</th>
-        <th>ArrivalTime</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let d of directResults">
-        <td>{{ d.routeId }}</td>
-        <td>{{ d.fromStop }}</td>
-        <td>{{ d.toStop }}</td>
-        <td>{{ d.departureTime }}</td>
-        <td>{{ d.arrivalTime }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Uhrzeit</mat-label>
+      <input matInput type="text" [(ngModel)]="time" placeholder="17:00:00" />
+    </mat-form-field>
 
-<!-- Complex Results -->
-<div class="ui segment">
-  <h3 class="ui header">Complex Connections (max 1 Umstieg)</h3>
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th>Route A</th>
-        <th>Route B</th>
-        <th>FromStop</th>
-        <th>MidStop</th>
-        <th>ToStop</th>
-        <th>DepA</th>
-        <th>ArrA</th>
-        <th>DepB</th>
-        <th>ArrB</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of complexResults">
-        <td>{{ c.routeIdA }}</td>
-        <td>{{ c.routeIdB }}</td>
-        <td>{{ c.fromStop }}</td>
-        <td>{{ c.midStop }}</td>
-        <td>{{ c.toStop }}</td>
-        <td>{{ c.depA }}</td>
-        <td>{{ c.arrA }}</td>
-        <td>{{ c.depB }}</td>
-        <td>{{ c.arrB }}</td>
-      </tr>
-    </tbody>
-  </table>
+    <mat-checkbox [(ngModel)]="isArrivalTime">Ist Ankunftszeit?</mat-checkbox>
+    <mat-checkbox [(ngModel)]="allowTransfers">Mit Umstieg?</mat-checkbox>
+
+    <mat-form-field *ngIf="allowTransfers" appearance="outline" class="full-width">
+      <mat-label>Maximale Umstiege</mat-label>
+      <input matInput type="number" [(ngModel)]="maxTransfers" placeholder="z.B. 1" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="searchConnections()">Suchen</button>
+  </mat-card>
+
+  <!-- Bereich für direkte Verbindungen -->
+  <mat-card class="table-card" *ngIf="directResults.length > 0">
+    <h2>Direkte Verbindungen</h2>
+    <table mat-table [dataSource]="directResults" class="mat-elevation-z1">
+      <ng-container matColumnDef="routeId">
+        <th mat-header-cell *matHeaderCellDef>Route-ID</th>
+        <td mat-cell *matCellDef="let d">{{ d.routeId }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fromStop">
+        <th mat-header-cell *matHeaderCellDef>Von</th>
+        <td mat-cell *matCellDef="let d">{{ d.fromStop }}</td>
+      </ng-container>
+      <ng-container matColumnDef="toStop">
+        <th mat-header-cell *matHeaderCellDef>Nach</th>
+        <td mat-cell *matCellDef="let d">{{ d.toStop }}</td>
+      </ng-container>
+      <ng-container matColumnDef="departureTime">
+        <th mat-header-cell *matHeaderCellDef>Abfahrt</th>
+        <td mat-cell *matCellDef="let d">{{ d.departureTime }}</td>
+      </ng-container>
+      <ng-container matColumnDef="arrivalTime">
+        <th mat-header-cell *matHeaderCellDef>Ankunft</th>
+        <td mat-cell *matCellDef="let d">{{ d.arrivalTime }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="['routeId', 'fromStop', 'toStop', 'departureTime', 'arrivalTime']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['routeId', 'fromStop', 'toStop', 'departureTime', 'arrivalTime']"></tr>
+    </table>
+    <button mat-raised-button color="accent" *ngIf="showMoreResults" (click)="loadMore()">Mehr anzeigen</button>
+    <button mat-raised-button color="warn" *ngIf="!showMoreResults" (click)="showLess()">Weniger anzeigen</button>
+  </mat-card>
+
+  <!-- Bereich für komplexe Verbindungen -->
+  <mat-card class="table-card" *ngIf="complexResults.length > 0">
+    <h2>Komplexe Verbindungen</h2>
+    <table mat-table [dataSource]="complexResults" class="mat-elevation-z1">
+      <ng-container matColumnDef="routeIdA">
+        <th mat-header-cell *matHeaderCellDef>Route A</th>
+        <td mat-cell *matCellDef="let c">{{ c.routeIdA }}</td>
+      </ng-container>
+      <ng-container matColumnDef="routeIdB">
+        <th mat-header-cell *matHeaderCellDef>Route B</th>
+        <td mat-cell *matCellDef="let c">{{ c.routeIdB }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fromStop">
+        <th mat-header-cell *matHeaderCellDef>Von</th>
+        <td mat-cell *matCellDef="let c">{{ c.fromStop }}</td>
+      </ng-container>
+      <ng-container matColumnDef="midStop">
+        <th mat-header-cell *matHeaderCellDef>Zwischenstop</th>
+        <td mat-cell *matCellDef="let c">{{ c.midStop }}</td>
+      </ng-container>
+      <ng-container matColumnDef="toStop">
+        <th mat-header-cell *matHeaderCellDef>Nach</th>
+        <td mat-cell *matCellDef="let c">{{ c.toStop }}</td>
+      </ng-container>
+      <ng-container matColumnDef="depA">
+        <th mat-header-cell *matHeaderCellDef>Abfahrt A</th>
+        <td mat-cell *matCellDef="let c">{{ c.depA }}</td>
+      </ng-container>
+      <ng-container matColumnDef="arrA">
+        <th mat-header-cell *matHeaderCellDef>Ankunft A</th>
+        <td mat-cell *matCellDef="let c">{{ c.arrA }}</td>
+      </ng-container>
+      <ng-container matColumnDef="depB">
+        <th mat-header-cell *matHeaderCellDef>Abfahrt B</th>
+        <td mat-cell *matCellDef="let c">{{ c.depB }}</td>
+      </ng-container>
+      <ng-container matColumnDef="arrB">
+        <th mat-header-cell *matHeaderCellDef>Ankunft B</th>
+        <td mat-cell *matCellDef="let c">{{ c.arrB }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="['routeIdA', 'routeIdB', 'fromStop', 'midStop', 'toStop', 'depA', 'arrA', 'depB', 'arrB']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['routeIdA', 'routeIdB', 'fromStop', 'midStop', 'toStop', 'depA', 'arrA', 'depB', 'arrB']"></tr>
+    </table>
+    <button mat-raised-button color="accent" *ngIf="showMoreResults" (click)="loadMore()">Mehr anzeigen</button>
+    <button mat-raised-button color="warn" *ngIf="!showMoreResults" (click)="showLess()">Weniger anzeigen</button>
+  </mat-card>
 </div>
